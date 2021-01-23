@@ -1,0 +1,43 @@
+{
+    "container": {
+        "docker": {
+            "image": "meltwater/mesos-demo-webapp:latest", 
+            "network": "HOST"
+        }, 
+        "type": "DOCKER"
+    }, 
+    "mem": 200, 
+    "cpus": 0.1, 
+    "ports": [
+        1234
+    ], 
+    "instances": 3, 
+    "env": {
+        "SERVICE_PUBLIC_KEY": "kVOhhw2wAJuAofxO7h4EM0xboxGAwnsq9J6fluFY5CQ=", 
+        "DEPLOY_PUBLIC_KEY": "zJCwR8KZ9+FSaekmTHLCQI51LTS9fTH3+1xmDOuB+iM=", 
+        "MASTER_PUBLIC_KEY": "4qWrxezV1LMehxHyWg1JOZ6KIoZ8LSdVGZQ4ehuAYy4=", 
+        "DATABASE": "mysql://$HOST:3306", 
+        "DATABASE_USERNAME": "myuser", 
+        "DATABASE_PASSWORD": "ENC[NACL,9eXE3SFcX28qlijqHLUm47HbrMtIL6xJvfpVmJrxYwk4J7hRXYi+Gnnbw3ALTQ==]", 
+        "DEPLOY_PRIVATE_KEY": "3w7yVq78zkv5ZivCncLiLRGmOdwWJxiCPRGd4hV4DVg=", 
+        "SECRETARY_URL": "http://localhost:5070"
+    }, 
+    "healthChecks": [
+        {
+            "portIndex": 0, 
+            "protocol": "HTTP", 
+            "timeoutSeconds": 5, 
+            "intervalSeconds": 10, 
+            "gracePeriodSeconds": 15, 
+            "maxConsecutiveFailures": 3, 
+            "path": "/_status"
+        }
+    ], 
+    "id": "/demo/webapp", 
+    "constraints": [
+        [
+            "hostname", 
+            "GROUP_BY"
+        ]
+    ]
+}
