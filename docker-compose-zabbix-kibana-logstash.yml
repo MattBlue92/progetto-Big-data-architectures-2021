@@ -14,13 +14,36 @@ services:
     networks:
       bda_project:
         ipv4_address: 172.16.121.6
+
+    #command: bash -c ' mysql -u zabbix -p zabbix zabbix < /home/Script-3.sql'
     volumes:
       - './zabbix/mysql:/var/lib/data'
+      #- './scriptMysql/Script-3.sql:/home/Script-3.sql'
     environment:
       - MYSQL_ROOT_PASSWORD=carryontech
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
       - MYSQL_PASSWORD=carryontech
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: zabbix
+      PMA_PASSWORD: carryontech
+      MYSQL_ROOT_PASSWORD: carryontech
+    restart: always
+    ports:
+      - 8081:80
+    networks:
+      bda_project:
+        ipv4_address: 172.16.121.9
 
   zabbix-server:
     container_name: zabbix-server

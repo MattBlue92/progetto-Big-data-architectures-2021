@@ -1,0 +1,26 @@
+create or replace view host as select h.hostid as hostid, h.host as host, id.ip as ip, id.dns as dns, id.port as port from hosts h inner join  interface id  on h.hostid = id.hostid
+
+create or replace view docker_name as select distinct i.hostid as hostid, h.value as docker_name from items i inner join history_str h on i.itemid=h.itemid where i.name = 'Docker: Name'
+
+create or replace view info as (select distinct SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 1), ':', -1) as name, h.value from items i inner join  history_text h on h.itemid=i.itemid where SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 2), ':', -1)=' MarathonAppId' and h.value != 'unknown')
+
+create or replace view CPU_total_usage_per_second as select host.host as hostname, host.ip as host_ip, host.dns as host_dns, host.port as host_port, docker_name.docker_name, info.value as container,SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, 'S', 2), 'S', -1), ':', 1), ':', -1) as instance_id, SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 2), ':', -1) as metrics, from_unixtime(h.clock) as time, h.value from items i,  history h, info, host, docker_name where i.itemid=h.itemid and i.hostid =host.hostid and i.hostid =docker_name.hostid and i.name regexp '^(Container /mesos)'  and i.name regexp '( CPU total usage per second)$' and SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 1), ':', -1)=info.name
+
+create or replace view Memory_maximum_usage as select host.host as hostname, host.ip as host_ip, host.dns as host_dns, host.port as host_port, docker_name.docker_name as docker_name, IF(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, 'S', 2), 'S', -1), ':', 1), ':', -1)='Docker','Docker',  info.value) as container, SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, 'S', 2), 'S', -1), ':', 1), ':', -1) as instance_id, SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 2), ':', -1) as metrics, from_unixtime(h.clock) as time, h.value from items i, history_uint h, info, host, docker_name where i.itemid=h.itemid and i.hostid =host.hostid and i.hostid =docker_name.hostid  and (i.name regexp '^(Container /mesos)' and  i.name regexp '( Memory maximum usage)$' and SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 1), ':', -1)=info.name)
+
+
+create or replace view Networks_bytes_received_per_second as select host.host as hostname, host.ip as host_ip, host.dns as host_dns, host.port as host_port, docker_name.docker_name, info.value as container, SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, 'S', 2), 'S', -1), ':', 1), ':', -1) as instance_id, SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 2), ':', -1) as metrics, from_unixtime(h.clock) as time, h.value from items i,  history h, info, host, docker_name where i.itemid=h.itemid and i.hostid =host.hostid and i.hostid =docker_name.hostid and i.name regexp '^(Container /mesos)'  and i.name regexp '( Networks bytes received per second)$' and SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 1), ':', -1)=info.name
+
+
+create or replace view Networks_bytes_sent_per_second as select host.host as hostname, host.ip as host_ip, host.dns as host_dns, host.port as host_port, docker_name.docker_name, info.value as container, SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, 'S', 2), 'S', -1), ':', 1), ':', -1) as instance_id, SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 2), ':', -1) as metrics, from_unixtime(h.clock) as time, h.value from items i,  history h, info, host, docker_name where i.itemid=h.itemid and i.hostid =host.hostid and i.hostid =docker_name.hostid and i.name regexp '^(Container /mesos)'  and i.name regexp '( Networks bytes sent per second)$' and SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 1), ':', -1)=info.name
+
+
+create or replace view Error as select host.host as hostname, host.ip as host_ip, host.dns as host_dns,  host.port as host_port, docker_name.docker_name, info.value as container, SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, 'S', 2), 'S', -1), ':', 1), ':', -1) as instance_id, SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 2), ':', -1) as metrics, from_unixtime(h.clock) as time, h.value from items i,  history_str h, info, host, docker_name where i.itemid=h.itemid and i.hostid =host.hostid and i.hostid =docker_name.hostid and i.name regexp '^(Container /mesos)'  and i.name regexp '( Error)$' and SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 1), ':', -1)=info.name
+
+
+create or replace view Docker as select host.host as hostname, host.ip as host_ip, host.dns as host_dns, host.port as host_port, docker_name.docker_name as docker_name, IF(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, 'S', 2), 'S', -1), ':', 1), ':', -1)='Docker','Docker',  info.value) as container, SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, 'S', 2), 'S', -1), ':', 1), ':', -1) as instance_id, SUBSTRING_INDEX(SUBSTRING_INDEX(i.name, ':', 2), ':', -1) as metrics, from_unixtime(h.clock) as time, h.value from items i, history_uint h, info, host, docker_name where i.itemid=h.itemid and i.hostid =host.hostid and i.hostid =docker_name.hostid and (i.name = 'Docker: Containers paused' or  i.name ='Docker: Containers running' or i.name= 'Docker: Containers stopped' or i.name= 'Docker: Containers total')
+
+
+
+
+

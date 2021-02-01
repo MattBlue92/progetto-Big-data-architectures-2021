@@ -14,12 +14,12 @@
     "instances": 3, 
     "env": {
         "SERVICE_PUBLIC_KEY": "kVOhhw2wAJuAofxO7h4EM0xboxGAwnsq9J6fluFY5CQ=", 
-        "DEPLOY_PUBLIC_KEY": "zJCwR8KZ9+FSaekmTHLCQI51LTS9fTH3+1xmDOuB+iM=", 
+        "DEPLOY_PUBLIC_KEY": "hz/TX2UJvcRCYFd0Z5B8bwNaKK9QhzSss4WGvOXEZiQ=", 
         "MASTER_PUBLIC_KEY": "4qWrxezV1LMehxHyWg1JOZ6KIoZ8LSdVGZQ4ehuAYy4=", 
         "DATABASE": "mysql://$HOST:3306", 
         "DATABASE_USERNAME": "myuser", 
         "DATABASE_PASSWORD": "ENC[NACL,9eXE3SFcX28qlijqHLUm47HbrMtIL6xJvfpVmJrxYwk4J7hRXYi+Gnnbw3ALTQ==]", 
-        "DEPLOY_PRIVATE_KEY": "3w7yVq78zkv5ZivCncLiLRGmOdwWJxiCPRGd4hV4DVg=", 
+        "DEPLOY_PRIVATE_KEY": "ZuKfiym7Tx5vGUsL03JZa3ku2qPD7ALi5gB8xbyfZCs=", 
         "SECRETARY_URL": "http://localhost:5070"
     }, 
     "healthChecks": [
