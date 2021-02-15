@@ -42,6 +42,5 @@ I servizi sono disponbili da browser ai seguenti indirizzi:
 * Mysql: IP: 172.16.121.6, Porta: 3306, User: zabbix Password: carryontech
 
 
-![dashboard](https://github.com/MattBlue92/progetto-Big-data-architectures-2021/tree/main/img/dashboard_snap4city.png)
+![dashboard](https://raw.githubusercontent.com/MattBlue92/progetto-Big-data-architectures-2021/main/img/dashboard_snap4city.png)
 
-`
