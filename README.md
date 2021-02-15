@@ -1,62 +1,47 @@
-# Dockerized Mesos Stack
-These images can be used to quickly get up and running with a local [Apache Mesos](http://mesos.apache.org/), [Marathon](https://mesosphere.github.io/marathon/) 
-and [Chronos](https://github.com/mesos/chronos/) cluster. The typical use case would be as a workbench to develop, test and demo your Marathon and Docker configurations.
+# Modelli di anomaly detection sulla base del comportamento di container
+Supponiamo di avere a disposizione su un server diverse macchine virtuali che
+eseguono applicazioni all’interno di container Docker. Risulta fondamentale avere un
+sistema di monitoraggio che rilevi la quantità di risorse (CPU, Memoria RAM, Disco,
+Rete ed Errori) al fine di rilevare utilizzi eccessivi di risorse e possibili malfunzionamenti
+delle applicazioni in esecuzione. L’architettura per la gestione, il monitoraggio e
+la rilevazione di anomalie nel consumo di risorse da parte delle applicazioni da noi
+studiata si compone di diverse componenti:
+* Apache Mesos, gestore di risorse per cluster di VM;
+* Apache Marathon, servizio di orchestrazione di container Mesos/Docker;
+* Zabbix, servizio di monitoraggio;
+* Kibana, strumento di visualizzazione dei dati per la creazione di dashboard accattivanti. 
+Queste componenti sono interconnesse fra di loro e realizzano un flusso di dati
+che consente di monitorare il consumo di risorse da parte delle diverse applicazioni
+attraverso le dashboard di Kibana.
+Abbiamo sviluppato questo progetto per il corso di Big Data Architectures e per la piattaforma Snap4city del DISIT-LAB 
+dell'università degli studi di Firenze (la dashboard finale è solo su snap4city)
 
-## Usage
-A local instance of the cluster infrastructure can be brought up with [Docker Compose](http://docs.docker.com/compose/) as
 
+## Istruzioni per l'esecuzione
+Da terminale nella cartella del progetto eseguire le seguenti istruzioni in questo ordine
 ```
-git clone git@github.com:meltwater/docker-mesos.git
-cd docker-mesos
-
-# You need to edit docker-compose.yml and set MESOS_HOSTNAME=<your IP-address> 
-# on the mesosslave container. This applies if your host doesn't have a 
-# hostname that resolves via DNS.
-
-docker-compose up
-```
-
-### Modifying Services
-
-If you add or modify the Marathon json files in marathon-submit/json/ you can restart the cluster to have them submitted. 
-
-```
-docker-compose kill
-docker-compose rm -f
-docker-compose build
-docker-compose up
+docker-compose -f docker-compose-zabbix-kibana-logstash.yml up
+docker-compose -f docker-compose-mesos.yml up
 ```
 
-## Web Interfaces
-**Note:** when using Mac OSX or Windows and [boot2docker](http://boot2docker.io/) the *localhost* part needs to be replaced with the hostname or IP of the boot2docker VM.
+Per arrestare i servizi  e pulire l'environment eseguire queste istruzioni:
+```
+docker-compose -f docker-compose-zabbix-kibana-logstash.yml down
+docker-compose -f docker-compose-mesos.yml down
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+docker volume prune
+```
 
- * Mesos is available at [localhost:5050](http://localhost:5050)
- * Marathon is at [localhost:8080](http://localhost:8080)
- * Chronos is at [localhost:4400](http://localhost:4400)
- * The demo webapp can be accessed through the service discovery proxy at [localhost:1234](http://localhost:1234)
- * Using Nginx vhost the demo webapp is also at [webapp.demo.localdomain](http://webapp.demo.localdomain) if you add a host alias "127.0.0.1 webapp.demo.localdomain"
+I servizi sono disponbili da browser ai seguenti indirizzi:
+* Zabbix: http://172.16.121.1/ User: Admin Password: carryontech
+* Kibana: http://0.0.0.0:5601/ 
+* Marathon: http://0.0.0.0:8080/
+* Mesos-master: http://0.0.0.0:5050
+* Mesos-slave: http://0.0.0.0:5051
+* Mysql: IP: 172.16.121.6, Porta: 3306, User: zabbix Password: carryontech
 
-## Services and Apps
-The *marathon-submit/json/* directory contains a number of example services that will be automatically submitted to Marathon on startup. You can add services by dropping JSON config files for Marathon into the *marathon-submit/json/* directory, doing a *docker-compose build* and they'll be deployed when you restart the cluster. One can also deploy apps directly to the running cluster using the Marathon [REST API](https://mesosphere.github.io/marathon/docs/rest-api.html). The same works for the *chronos-submit/json/* directory. See the Chronos [REST API](https://mesos.github.io/chronos/docs/api.html) for more info.
 
-* [Marathon docs](https://mesosphere.github.io/marathon/docs/) for further info and examples. 
-* [Chronos docs](https://mesos.github.io/chronos/docs/) for further info and examples. 
+![dashboard](https://github.com/MattBlue92/progetto-Big-data-architectures-2021/tree/main/img/dashboard_snap4city.png)
 
-## Service Discovery
-There's several ways to implement service discovery, ranging from dynamic DNS and configuration updates to lower level network 
-plumbing. One of the goals of service discovery is to externalize concerns like network configuration, high availability and 
-scaling from service consumers and applications. Another aspect is the ability to vary the service discovery mechanism and 
-network plumbing without impacting existing applications and configurations.
-
-### Dynamic Proxies
-A common service discovery implementation involves proxies that bind to localhost and forwards TCP and UDP connections to 
-where services are currently running. Clients are statically configured to access services through localhost on a 
-well-known port number. The proxy takes care of failover and load balancing in case the service moves or has multiple 
-replicas. In case of a failover the service consumer will receive a transient connection error and needs to retry 
-until the connection reestablishes.
-
-In this solution Marathon keeps track of running services and expose this state through RESTful HTTP endpoints. The 
-[proxymatic](https://github.com/meltwater/docker-proxymatic) container subscribes to state updates and 
-configures [Pen](http://siag.nu/pen/) or [HAProxy](http://www.haproxy.org/) to forward connections. The effect is 
-that TCP and UDP connections are forwarded from a well known [service port](http://mesosphere.com/docs/getting-started/service-discovery/) 
-to one of the healthy service replicas.
+`

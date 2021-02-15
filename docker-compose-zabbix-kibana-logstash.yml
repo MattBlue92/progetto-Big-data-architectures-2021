@@ -18,7 +18,7 @@ services:
     #command: bash -c ' mysql -u zabbix -p zabbix zabbix < /home/Script-3.sql'
     volumes:
       - './zabbix/mysql:/var/lib/data'
-      #- './scriptMysql/Script-3.sql:/home/Script-3.sql'
+      - './zabbix/config/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf'
     environment:
       - MYSQL_ROOT_PASSWORD=carryontech
       - MYSQL_DATABASE=zabbix
