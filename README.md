@@ -10,6 +10,9 @@ studiata si compone di diverse componenti:
 * Apache Marathon, servizio di orchestrazione di container Mesos/Docker;
 * Zabbix, servizio di monitoraggio;
 * Kibana, strumento di visualizzazione dei dati per la creazione di dashboard accattivanti. 
+
+
+
 Queste componenti sono interconnesse fra di loro e realizzano un flusso di dati
 che consente di monitorare il consumo di risorse da parte delle diverse applicazioni
 attraverso le dashboard di Kibana.
